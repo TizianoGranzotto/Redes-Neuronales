@@ -1,7 +1,7 @@
-echo "# Granzotto-Tiziano" >> README.md
+echo "# Redes-Neuronales" >> README.md
 git init
 git add README.md
 git commit -m "first commit"
 git branch -M main
-git remote add origin https://github.com/SlimShadyRuso/Granzotto-Tiziano.git
+git remote add origin https://github.com/GranzottoTiziano/Redes-Neuronales.git
 git push -u origin main
