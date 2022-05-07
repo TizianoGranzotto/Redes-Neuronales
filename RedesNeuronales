@@ -1,0 +1,218 @@
+/*
+1)Ecosistema simple
+2)Mejorar ecosistema
+3)Implementar características de células y objetos reales
+4)Crear microsistema real
+*/
+
+vegetal VG;
+
+float x = 0;
+float y = 0;
+int cantidad_vegetales = 3;
+boolean crear_vegetal = true;
+int population = 0;
+//int velocidad_del_tiempo = 2;
+
+void setup()
+{
+  //fullScreen();
+  size(512,512);
+  frameRate(60);
+  background(0);
+  
+  VG = new vegetal();
+}
+
+void draw()
+{
+  background(200,200,255); //fondo celestito
+  println(population);
+  
+  for(int i = 0; i < cantidad_vegetales; i++)
+  {
+    if(population != cantidad_vegetales)
+    {
+      VG.create();//Número de célula
+      VG.setPlaces(i,0,0);
+    }
+    VG.crecer(i);
+    VG.display(i);
+    VG.showPositions(i);
+    VG.getOld(i);
+  }
+  fingerOfGod();
+}
+
+void fingerOfGod()
+{
+  if(mousePressed)
+  {
+    VG.create();
+    VG.setPlaces(cantidad_vegetales+1,mouseX,mouseY);
+    VG.crecer(cantidad_vegetales+1);
+    VG.display(cantidad_vegetales+1);
+    VG.showPositions(cantidad_vegetales+1);
+    VG.getOld(cantidad_vegetales+1);
+    population += 1;
+    
+  }
+}
+
+//*********************************************************************************************************************************
+/*
+Área de fotosíntesis
+Función: alimentará a los vegetales proporcionando energía solar
+Ayudará en la visión de los seres vivos
+Tendrá un ambiente más cálido, que el área donde no se encuentra
+¿será necesario que su presencia sea natural?
+ si es así, establecer zona horaria
+*/
+
+class solcito
+{
+  
+}
+//*********************************************************************************************************************************
+/*
+ Compuesta por células eucariotas(?
+ Subsistencia: Energía solar
+ Movimiento: Tiende a crecer en dirección al área iluminada
+para realizar el proceso de fotosíntesis
+ Características físicas/visuales: Color; se forman en cadenas;
+pueden tener una célula madre o raíz o simplemente ser una cadena
+separada formada por los restos de una molécula vegetal anterior
+ Accesorios: En cierto punto tener un límite de crecimiento,
+optará por reproducirse (estilo aloe vera)
+ Supongamos 100/100 puntos de almacenamiento de energía
+para cada célula vegetal
+10/100 solo crecerá con la fotosíntesis
+(capaz variables float funcionan mejor para su crecimiento)
+30/100 probabilidad de producirse 100% por ciclo 1 unidad
+100/100 capaz de reproducir (100%=1u)(50%=2u)(25%=4u)(12,5%=8u)
+ límite de 8 células alrededor de la célula madre
+ las < a 30 de energía, crearán cadenas
+ Movimiento: Las células madre no se moverán, salvo factor externo
+(algún organismo que lo empuje)
+ Las llamadas "A" rotarán teniendo como base
+a la célula mayor a la que está unida
+ Las llamadas "B" rotarán de igual manera, a veces formando líneas
+*/
+
+class vegetal
+{
+  FloatList x_pos;
+  FloatList y_pos;
+  FloatList size;
+  FloatList T;
+  float grow_up = 0;
+  
+  void create()
+  {
+    try{
+      x_pos = new FloatList();
+      x_pos.append((width/2)+random(-256,256));
+        
+      y_pos = new FloatList();
+      y_pos.append((height/2)+random(-256,256));
+        
+      size = new FloatList();
+      size.append(0);
+      
+      T = new FloatList();
+      T.append(0);
+    }catch(Exception E){println(E);}
+    
+    //*****************************************************************************
+    population += 1;
+    println();
+  }
+  
+  void getOld(int identificador)
+  {
+    T.set(identificador,1);
+  }
+  
+  void setPlaces(int identificador,float x, float y)
+  {
+    if(x != 0 && y != 0)
+    {
+      x_pos.set(identificador,x);
+      y_pos.set(identificador,y);
+    }else{
+      x_pos.set(identificador,(width/2)+random(-256,256));
+      y_pos.set(identificador,(height/2)+random(-256,256));
+    }
+  }
+  
+  void crecer(int identificador)
+  {
+    try{
+    if(T.get(identificador) <= 50)
+    {
+      grow_up = grow_up + 0.01;
+    }
+    }catch(Exception E){
+      println(E);
+    }
+    try
+    {
+    size.set(identificador,grow_up);
+    }catch(Exception E){
+      println(E);
+    }
+  }
+  
+  void display(int identificador)
+  {
+    //*****************************************************************************
+    
+    stroke(100);
+    strokeWeight(0.05*size.get(identificador));
+    fill(0,255,150);
+    
+    //*****************************************************************************
+    println("Identificador = " + identificador);
+    try
+    {
+      circle(x_pos.get(identificador),y_pos.get(identificador),size.get(identificador));
+      println("Célula " + identificador + " creada.");
+      println("Su posición horizontal = "+x_pos.get(identificador));
+      println("Su posición vertical = "+y_pos.get(identificador));
+      println("Su tamaño = "+size.get(identificador));
+    }
+    catch(Exception E)
+    {
+      println("Es imposible mostrar célula vegetal número " + identificador);
+      println(E);
+      println("O sea, no se agregó 'valor x' a 'x_pos[]'");
+    }
+    //*****************************************************************************
+    println("Célula " + identificador + " spawneada.");
+    println();
+  }
+  void showPositions(int identificador)
+  {
+    for(int i = 0; i <= identificador; i++)
+    {
+      noStroke();
+      fill(255);
+      rect(width-180,0,width,30+(15*i));
+    }
+    
+    fill(150,0,0);
+    text("x_pos",width-175,10);
+    fill(0,0,150);
+    text("y_pos",width-115,10);
+    fill(0,150,0);
+    text("size",width-55,10);
+    
+    for(int i = 0; i <= identificador; i++)
+    {
+      fill(0);
+      text(x_pos.get(i),width-175,25+(15*i));
+      text(y_pos.get(i),width-115,25+(15*i));
+      text(size.get(i),width-55,25+(15*i));
+    }
+  }
+}
